@@ -15,7 +15,7 @@ pipeline{
         }
         stage('Checkout From Git'){
             steps{
-                git branch: 'main', url: 'https://github.com/Aj7Ay/Petclinic-Real.git'
+                git branch: 'main', url: 'https://github.com/sanaabahcine/PetclinicPFE.git'
             }
         }
         stage('mvn compile'){
@@ -40,7 +40,7 @@ pipeline{
         stage("quality gate"){
            steps {
                  script {
-                     waitForQualityGate abortPipeline: false, credentialsId: 'SonarQube-token' 
+                     waitForQualityGate abortPipeline: false, credentialsId: 'SonarQube-Token' 
                     }
                 } 
         } 
@@ -68,7 +68,7 @@ pipeline{
         }
         stage("TRIVY"){
             steps{
-                sh "trivy image sevenajay/petclinic1:latest > trivy.txt" 
+                sh "trivy image  sanaeabahcine371/petclinic1:latest > trivy.txt" 
             }
         }
     
