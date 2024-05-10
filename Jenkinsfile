@@ -66,11 +66,7 @@ pipeline{
                 }
             }
         }
-        stage("TRIVY"){
-            steps{
-                sh "trivy image  sanaeabahcine371/petclinic1:latest > trivy.txt" 
-            }
-        }
+      
     
   
         
