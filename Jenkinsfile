@@ -1,158 +1,78 @@
-pipeline{
-    agent any
+pipeline {
+    agent any 
+    
     tools{
         jdk 'jdk17'
         maven 'maven3'
     }
+    
     environment {
         SCANNER_HOME=tool 'sonar-scanner'
     }
-    stages {
-        stage('clean workspace'){
+    
+    stages{
+        
+        stage("Git Checkout"){
             steps{
-                cleanWs()
+                git branch: 'main', changelog: false, poll: false, url: 'https://github.com/jaiswaladi246/Petclinic.git'
             }
         }
-        stage('Checkout From Git'){
+        
+        stage("Compile"){
             steps{
-                git branch: 'main', url: 'https://github.com/Aj7Ay/Petclinic-Real.git'
+                sh "mvn clean compile"
             }
         }
-        stage('mvn compile'){
+        
+         stage("Test Cases"){
             steps{
-                sh 'mvn clean compile'
+                sh "mvn test"
             }
         }
-        stage('mvn test'){
-            steps{
-                sh 'mvn test'
-            }
-        }
+        
         stage("Sonarqube Analysis "){
             steps{
                 withSonarQubeEnv('sonar-server') {
                     sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=Petclinic \
                     -Dsonar.java.binaries=. \
                     -Dsonar.projectKey=Petclinic '''
+    
                 }
             }
         }
-        stage("quality gate"){
-           steps {
-                 script {
-                     waitForQualityGate abortPipeline: false, credentialsId: 'Sonar-token' 
-                    }
-                } 
-        } 
-        stage('mvn build'){
-            steps{
-                sh 'mvn clean install'
-            }
-        }  
+        
         stage("OWASP Dependency Check"){
             steps{
-                dependencyCheck additionalArguments: '--scan ./ --format HTML ', odcInstallation: 'DP-Check'
-                dependencyCheckPublisher pattern: '**/dependency-check-report.html'
+                dependencyCheck additionalArguments: '--scan ./ --format HTML ', odcInstallation: 'DP'
+                dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
             }
         }
+        
+         stage("Build"){
+            steps{
+                sh " mvn clean install"
+            }
+        }
+        
         stage("Docker Build & Push"){
             steps{
                 script{
-                   withDockerRegistry(credentialsId: 'docker', toolName: 'docker'){   
-                       sh "docker build -t petclinic1 ."
-                       sh "docker tag petclinic1 sevenajay/petclinic1:latest "
-                       sh "docker push sevenajay/petclinic1:latest "
+                   withDockerRegistry(credentialsId: '58be877c-9294-410e-98ee-6a959d73b352', toolName: 'docker') {
+                        
+                        sh "docker build -t image1 ."
+                        sh "docker tag image1 adijaiswal/pet-clinic123:latest "
+                        sh "docker push adijaiswal/pet-clinic123:latest "
                     }
                 }
             }
         }
+        
         stage("TRIVY"){
             steps{
-                sh "trivy image sevenajay/petclinic1:latest > trivy.txt" 
+                sh " trivy image adijaiswal/pet-clinic123:latest"
             }
         }
-        stage('Clean up containers') {   //if container runs it will stop and remove this block
-          steps {
-           script {
-             try {
-                sh 'docker stop pet1'
-                sh 'docker rm pet1'
-                } catch (Exception e) {
-                  echo "Container pet1 not found, moving to next stage"  
-                }
-            }
-          }
-        }
-        stage ('Manual Approval'){
-          steps {
-           script {
-             timeout(time: 10, unit: 'MINUTES') {
-              def approvalMailContent = """
-              Project: ${env.JOB_NAME}
-              Build Number: ${env.BUILD_NUMBER}
-              Go to build URL and approve the deployment request.
-              URL de build: ${env.BUILD_URL}
-              """
-             mail(
-             to: 'postbox.aj99@gmail.com',
-             subject: "${currentBuild.result} CI: Project name -> ${env.JOB_NAME}", 
-             body: approvalMailContent,
-             mimeType: 'text/plain'
-             )
-            input(
-            id: "DeployGate",
-            message: "Deploy ${params.project_name}?",
-            submitter: "approver",
-            parameters: [choice(name: 'action', choices: ['Deploy'], description: 'Approve deployment')]
-            )  
-          }
-         }
-       }
+        
+       
     }
-        stage('Deploy to conatiner'){
-            steps{
-                sh 'docker run -d --name pet1 -p 8082:8080 sevenajay/petclinic1:latest'
-            }
-        }
-        stage("Deploy To Tomcat"){
-            steps{
-                sh "sudo cp  /var/lib/jenkins/workspace/petclinic/target/petclinic.war /opt/apache-tomcat-9.0.65/webapps/ "
-            }
-        }
-        stage('Deploy to kubernets'){
-            steps{
-                script{
-                    withKubeConfig(caCertificate: '', clusterName: '', contextName: '', credentialsId: 'k8s', namespace: '', restrictKubeConfigAccess: false, serverUrl: '') {
-                       sh 'kubectl apply -f deployment.yaml'
-                  }
-                }
-            }
-        }
-    }
-    post {
-     always {
-        emailext attachLog: true,
-            subject: "'${currentBuild.result}'",
-            body: "Project: ${env.JOB_NAME}<br/>" +
-                "Build Number: ${env.BUILD_NUMBER}<br/>" +
-                "URL: ${env.BUILD_URL}<br/>",
-            to: 'postbox.aj99@gmail.com',
-            attachmentsPattern: 'trivy.txt'
-        }
-    }
-}
-
-
-// try this approval stage also 
-
-stage('Manual Approval') {
-  timeout(time: 10, unit: 'MINUTES') {
-    mail to: 'postbox.aj99@gmail.com',
-         subject: "${currentBuild.result} CI: ${env.JOB_NAME}",
-         body: "Project: ${env.JOB_NAME}\nBuild Number: ${env.BUILD_NUMBER}\nGo to ${env.BUILD_URL} and approve deployment"
-    input message: "Deploy ${params.project_name}?", 
-           id: "DeployGate", 
-           submitter: "approver", 
-           parameters: [choice(name: 'action', choices: ['Deploy'], description: 'Approve deployment')]
-  }
 }
