@@ -46,27 +46,7 @@ pipeline {
 
 
 
-        stage('mvn build') {
-            steps {
-                sh 'mvn clean install'
-            }
-        }
-        stage("OWASP Dependency Check") {
-            steps {
-                dependencyCheck additionalArguments: '--scan ./ --format HTML ', odcInstallation: 'DP-Check'
-                dependencyCheckPublisher pattern: '**/dependency-check-report.html'
-            }
-        }
-        stage("Docker Build & Push") {
-            steps {
-                script {
-                    withDockerRegistry(credentialsId: 'docker', toolName: 'docker') {   
-                        sh "docker build -t petclinic1 ."
-                        sh "docker tag petclinic1 sanaeabahcine371/petclinic1:latest "
-                        sh "docker push sanaeabahcine371/petclinic1:latest "
-                    }
-                }
-            }
-        }
+      
+    
     }
 }
