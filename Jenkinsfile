@@ -6,6 +6,7 @@ pipeline {
     }
     environment {
         SCANNER_HOME = tool 'sonar-scanner'
+       
     }
     stages {
         stage('clean workspace') {
@@ -52,7 +53,7 @@ pipeline {
             stage("Docker Build & Push") {
             steps {
                 script {
-                    withDockerRegistry(credentialsId: 'docker', toolName: 'docker') {   
+                    withDockerRegistry(credentialsId: 'dockerhub') {   
                         sh "docker build -t petclinic1 ."
                         sh "docker tag petclinic1 sanaeabahcine371/petclinic1:latest "
                         sh "docker push sanaeabahcine371/petclinic1:latest "
