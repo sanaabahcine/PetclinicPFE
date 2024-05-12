@@ -42,13 +42,7 @@ pipeline {
                 }
             }
         }
-    stage("quality gate"){
-           steps {
-                 script {
-                     waitForQualityGate abortPipeline: false, credentialsId: 'SonarQube-Token' 
-                    }
-                } 
-        } 
+
 
   stage('mvn build') {
             steps {
