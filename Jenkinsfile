@@ -6,7 +6,7 @@ pipeline {
     }
     environment {
         SCANNER_HOME = tool 'sonar-scanner'
-           KUBECONFIG = 'C:\\Users\\Dell\\.kube\\config'
+          KUBECONFIG = 'C:\\Users\\Dell\\.kube'
     }
     stages {
         stage('clean workspace') {
