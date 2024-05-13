@@ -23,8 +23,6 @@ pipeline {
                 sh 'mvn clean compile'
             }
         }
-      
-     
         stage('mvn build') {
             steps {
                 sh 'mvn clean install'
@@ -44,28 +42,14 @@ pipeline {
                 }
             }
         }
-
-
-   
-    
-    stages {
         stage('Check Kubernetes Connectivity') {
             steps {
                 script {
-                    // Exécutez une commande kubectl pour obtenir la liste des nœuds du cluster Kubernetes
+                    // Execute a kubectl command to get the list of nodes in the Kubernetes cluster
                     sh "kubectl get nodes"
                 }
             }
         }
-        // Ajoutez d'autres étapes de votre pipeline ici
-    }
-
-
-
-
-
-
-        
         stage("Deploy to Kubernetes") {
             steps {
                 script {
