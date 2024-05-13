@@ -8,3 +8,7 @@ image:
   tag: latest
 ingress:
   enabled: false
+
+  
+autoscaling:
+  enabled: false
