@@ -8,5 +8,3 @@ image:
   tag: latest
 ingress:
   enabled: false
-ingress:
-  enabled: false
