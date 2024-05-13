@@ -12,3 +12,6 @@ ingress:
   
 autoscaling:
   enabled: false
+
+service:
+  type: NodePort
