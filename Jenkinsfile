@@ -59,7 +59,7 @@ pipeline {
             steps {
                 script {
                     // Deploy the application using Helm with the Kubernetes context from Rancher Desktop
-                    sh "helm --kubeconfig=${KUBECONFIG} upgrade --install petclinic ./petclinic-chart --values ./petclinic-chart/values.yaml"
+                    sh "helm --kubeconfig=${KUBECONFIG} upgrade --install petclinic ./petclinic-chart --values ./petclinic/values.yaml"
                 }
             }
         }
