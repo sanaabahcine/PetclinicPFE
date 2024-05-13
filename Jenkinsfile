@@ -6,7 +6,7 @@ pipeline {
     }
     environment {
         SCANNER_HOME = tool 'sonar-scanner'
-        KUBECONFIG = 'C:\Users\Dell\.kube\config' // Chemin vers le fichier kubeconfig de Rancher Desktop
+        KUBECONFIG = 'C:\\Users\\Dell\\.kube\\config' // Chemin vers le fichier kubeconfig de Rancher Desktop
     }
     stages {
         // Étapes précédentes du pipeline
