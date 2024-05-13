@@ -6,27 +6,32 @@ pipeline {
     }
     environment {
         SCANNER_HOME = tool 'sonar-scanner'
-        KUBECONFIG = 'C:\\Users\\Dell\\.kube\\config' // Chemin vers le fichier kubeconfig de Rancher Desktop
+         KUBECONFIG = 'C:\\Users\\Dell\\.kube\\config'
     }
     stages {
-        stage('Clean Workspace') {
+        stage('clean workspace') {
             steps {
                 cleanWs()
             }
         }
-        stage('Checkout Code') {
+        stage('Checkout From Git') {
             steps {
                 git branch: 'main', url: 'https://github.com/sanaabahcine/PetclinicPFE.git'
             }
         }
-      
-        stage('mvn test') {
+        stage('mvn compile') {
             steps {
-                sh 'mvn clean test jacoco:report'
+                sh 'mvn clean compile'
             }
-      
         }
-        stage('Build and Push Docker Image') {
+    
+     
+        stage('mvn build') {
+            steps {
+                sh 'mvn clean install'
+            }
+        }
+        stage("Build and Push Docker Image") {
             steps {
                 script {
                     // Build the Docker image
@@ -40,8 +45,17 @@ pipeline {
                 }
             }
         }
-     
-        stage('Deploy to Kubernetes') {
+
+
+          stage('Check Kubernetes Connectivity') {
+            steps {
+                script {
+                    // Execute a kubectl command to get the list of nodes in the Kubernetes cluster
+                    sh "kubectl --kubeconfig=${KUBECONFIG} get nodes"
+                }
+            }
+        }
+       stage('Deploy to Kubernetes') {
             steps {
                 script {
                     // Deploy the application using Helm with the Kubernetes context from Rancher Desktop
