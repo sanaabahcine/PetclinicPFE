@@ -19,20 +19,16 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/sanaabahcine/PetclinicPFE.git'
             }
         }
-        stage('Build') {
+         stage('mvn compile') {
             steps {
                 sh 'mvn clean compile'
             }
         }
-        stage('Unit Tests') {
+        stage('mvn test') {
             steps {
-                // Run your unit tests here
+                sh 'mvn clean test jacoco:report'
             }
-        }
-        stage('Package') {
-            steps {
-                sh 'mvn clean package'
-            }
+      
         }
         stage('Build and Push Docker Image') {
             steps {
@@ -48,14 +44,7 @@ pipeline {
                 }
             }
         }
-        stage('Check Kubernetes Connectivity') {
-            steps {
-                script {
-                    // Execute a kubectl command to get the list of nodes in the Kubernetes cluster
-                    sh "kubectl --kubeconfig=${KUBECONFIG} get nodes"
-                }
-            }
-        }
+     
         stage('Deploy to Kubernetes') {
             steps {
                 script {
