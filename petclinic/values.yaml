@@ -1,4 +1,7 @@
 replicaCount: 3
+serviceAccount:
+  create: false
+
 
 image:
   repository: sanaeabahcine371/petclinic1
