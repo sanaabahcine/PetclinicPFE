@@ -45,8 +45,8 @@ pipeline {
             }
         }
 
-pipeline {
-    agent any
+
+   
     
     stages {
         stage('Check Kubernetes Connectivity') {
@@ -59,7 +59,7 @@ pipeline {
         }
         // Ajoutez d'autres étapes de votre pipeline ici
     }
-}
+
 
 
 
