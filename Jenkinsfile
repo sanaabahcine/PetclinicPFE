@@ -6,7 +6,6 @@ pipeline {
     }
     environment {
         SCANNER_HOME = tool 'sonar-scanner'
-       
     }
     stages {
         stage('clean workspace') {
@@ -43,27 +42,32 @@ pipeline {
                 }
             }
         }
-
-
-  stage('mvn build') {
+        stage('mvn build') {
             steps {
                 sh 'mvn clean install'
             }
         }
-            stage("Docker Build & Push") {
+        stage("Build and Push Docker Image") {
             steps {
                 script {
-                    withDockerRegistry(credentialsId: 'dockerhub') {   
-                        sh "docker build -t petclinic1 ."
-                        sh "docker tag petclinic1 sanaeabahcine371/petclinic1:latest "
-                        sh "docker push sanaeabahcine371/petclinic1:latest "
-                    }
+                    // Build the Docker image
+                    sh "docker build -t petclinic-image ."
+                    
+                    // Tag the Docker image
+                    sh "docker tag petclinic-image sanaeabahcine371/petclinic1:latest"
+                    
+                    // Push the Docker image to Docker Hub
+                    sh "docker push sanaeabahcine371/petclinic1:latest"
                 }
             }
         }
-     
-        
-      
-    
+        stage("Deploy to Kubernetes") {
+            steps {
+                script {
+                    // Deploy the application using Helm
+                    sh "helm upgrade --install petclinic ./petclinic-chart --values ./petclinic-chart/values.yaml"
+                }
+            }
+        }
     }
 }
