@@ -6,3 +6,7 @@ serviceAccount:
 image:
   repository: sanaeabahcine371/petclinic1
   tag: latest
+ingress:
+  enabled: false
+ingress:
+  enabled: false
