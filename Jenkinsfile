@@ -44,6 +44,28 @@ pipeline {
                 }
             }
         }
+
+pipeline {
+    agent any
+    
+    stages {
+        stage('Check Kubernetes Connectivity') {
+            steps {
+                script {
+                    // Exécutez une commande kubectl pour obtenir la liste des nœuds du cluster Kubernetes
+                    sh "kubectl get nodes"
+                }
+            }
+        }
+        // Ajoutez d'autres étapes de votre pipeline ici
+    }
+}
+
+
+
+
+
+        
         stage("Deploy to Kubernetes") {
             steps {
                 script {
