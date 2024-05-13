@@ -19,11 +19,7 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/sanaabahcine/PetclinicPFE.git'
             }
         }
-         stage('mvn compile') {
-            steps {
-                sh 'mvn clean compile'
-            }
-        }
+      
         stage('mvn test') {
             steps {
                 sh 'mvn clean test jacoco:report'
