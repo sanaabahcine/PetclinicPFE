@@ -6,6 +6,10 @@ petclinic
 {{- printf "%s-%s" .Release.Name (include "petclinic.name" .) | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
+{{- define "petclinic.chart" -}}
+{{- printf "%s-%s" .Chart.Name .Chart.Version -}}
+{{- end -}}
+
 {{- define "petclinic.labels" -}}
 app.kubernetes.io/name: {{ include "petclinic.name" . }}
 helm.sh/chart: {{ include "petclinic.chart" . }}
