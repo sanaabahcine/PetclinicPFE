@@ -3,10 +3,13 @@ kind: Pod
 metadata:
   name: "{{ include "petclinic.fullname" . }}-test-connection"
   labels:
-    {{ include "petclinic.labels" . | nindent 4 }}
+    {{- include "petclinic.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
 spec:
   containers:
-    - name: curl
-      image: curlimages/curl
-      command: ['curl']
-      args: ['{{ include "petclinic.fullname" . }}:8080']
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['{{ include "petclinic.fullname" . }}:{{ .Values.service.port }}']
+  restartPolicy: Never
