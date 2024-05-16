@@ -6,7 +6,7 @@ pipeline {
     }
     environment {
         SCANNER_HOME = tool 'sonar-scanner'
-           KUBECONFIG = 'C:/Users/Dell/.kube/config'
+        KUBECONFIG = 'C:/Users/Dell/.kube/config'
     }
     stages {
         stage('clean workspace') {
@@ -24,8 +24,6 @@ pipeline {
                 sh 'mvn clean compile'
             }
         }
-    
-     
         stage('mvn build') {
             steps {
                 sh 'mvn clean install'
@@ -45,9 +43,26 @@ pipeline {
                 }
             }
         }
+        stage('Update Helm Chart') {
+            steps {
+                script {
+                    // Clone your Helm chart repository
+                    git branch: 'main', url: 'https://github.com/sanaabahcine/petclinic-helm-chart.git'
 
+                    // Update version/tag of Helm chart to match the Docker image version
+                    def chartVersion = '1.0.0' // Replace with the appropriate version
+                    sh "sed -i 's/^version:.*/version: ${chartVersion}/' ./petclinic/Chart.yaml"
 
-          stage('Check Kubernetes Connectivity') {
+                    // Commit and push changes to Helm chart repository
+                    sh "git config --global user.email 'sanae.abahcine@esi.ac.ma'"
+                    sh "git config --global user.name 'sanaabahcine'"
+                    sh "git add ."
+                    sh "git commit -m 'Update chart version to ${chartVersion}'"
+                    sh "git push"
+                }
+            }
+        }
+        stage('Check Kubernetes Connectivity') {
             steps {
                 script {
                     // Execute a kubectl command to get the list of nodes in the Kubernetes cluster
@@ -55,18 +70,12 @@ pipeline {
                 }
             }
         }
-       stage('Deploy to Kubernetes') {
+        stage('Deploy to Kubernetes') {
             steps {
                 script {
                     // Deploy the application using Helm with the Kubernetes context from Rancher Desktop
-
-                   
-sh "helm --kubeconfig=C:/Users/Dell/.kube/config upgrade --install petclinic ./petclinic --values ./petclinic/values.yaml"
-
-
-
-
-                        }
+                    sh "helm --kubeconfig=C:/Users/Dell/.kube/config upgrade --install petclinic ./petclinic --values ./petclinic/values.yaml"
+                }
             }
         }
     }
