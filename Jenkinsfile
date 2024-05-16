@@ -43,25 +43,7 @@ pipeline {
                 }
             }
         }
-        stage('Update Helm Chart') {
-            steps {
-                script {
-                    // Clone your Helm chart repository
-                    git branch: 'main', url: 'https://github.com/sanaabahcine/petclinic'
-
-                    // Update version/tag of Helm chart to match the Docker image version
-                    def chartVersion = '1.0.0' // Replace with the appropriate version
-                    sh "sed -i 's/^version:.*/version: ${chartVersion}/' ./petclinic/Chart.yaml"
-
-                    // Commit and push changes to Helm chart repository
-                    sh "git config --global user.email 'sanae.abahcine@esi.ac.ma'"
-                    sh "git config --global user.name 'sanaabahcine'"
-                    sh "git add ."
-                    sh "git commit -m 'Update chart version to ${chartVersion}'"
-                    sh "git push"
-                }
-            }
-        }
+ 
         stage('Check Kubernetes Connectivity') {
             steps {
                 script {
