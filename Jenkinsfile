@@ -47,7 +47,7 @@ pipeline {
             steps {
                 script {
                     // Clone your Helm chart repository
-                    git branch: 'main', url: 'https://github.com/sanaabahcine/petclinic-helm-chart.git'
+                    git branch: 'main', url: 'https://github.com/sanaabahcine/petclinic'
 
                     // Update version/tag of Helm chart to match the Docker image version
                     def chartVersion = '1.0.0' // Replace with the appropriate version
