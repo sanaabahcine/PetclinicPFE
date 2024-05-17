@@ -1,17 +1,14 @@
 replicaCount: 3
-serviceAccount:
-  create: false
-
 
 image:
   repository: sanaeabahcine371/petclinic1
   tag: latest
+
 ingress:
   enabled: false
 
-  
 autoscaling:
-  enabled: false
+  enabled: true  # Change to true to enable Horizontal Pod Autoscaler
 
 service:
-  type: NodePort
+  type: LoadBalancer  # Change to LoadBalancer to expose the service externally
