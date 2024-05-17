@@ -18,15 +18,7 @@ spec:
         - name: petclinic
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           ports:
-            - containerPort: 8080
----
-apiVersion: apps/v1
-kind: HorizontalPodAutoscaler
-metadata:
-  name: {{ .Release.Name }}-petclinic-hpa
-spec:
-  scaleTargetRef:
-    apiVersion: apps/v1
+
     kind: Deployment
     name: {{ .Release.Name }}-petclinic-deployment
   minReplicas: 1
