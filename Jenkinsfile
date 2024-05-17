@@ -52,11 +52,10 @@ pipeline {
                 }
             }
         }
-        stage('Deploy to Kubernetes') {
+       stage('Deploy to AKS') {
             steps {
                 script {
-                    // Deploy the application using Helm with the Kubernetes context from Rancher Desktop
-                    sh "helm --kubeconfig=C:/Users/Dell/.kube/config upgrade --install petclinic ./petclinic --values ./petclinic/values.yaml"
+                    sh "helm upgrade --install petclinic ./petclinic --values ./petclinic/values.yaml --kubeconfig=${KUBECONFIG}"
                 }
             }
         }
