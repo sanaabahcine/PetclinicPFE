@@ -12,3 +12,6 @@ autoscaling:
 
 service:
   type: LoadBalancer  # Change to LoadBalancer to expose the service externally
+
+serviceAccount:
+  create: true # ou false en fonction de vos besoins
