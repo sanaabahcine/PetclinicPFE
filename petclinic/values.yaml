@@ -12,3 +12,5 @@ autoscaling:
 
 service:
   type: NodePort
+serviceAccount:
+  create: true
