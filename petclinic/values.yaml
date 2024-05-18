@@ -8,7 +8,7 @@ ingress:
   enabled: false
 
 autoscaling:
-  enabled: false
+  enabled: true
 
 service:
   type: NodePort
