@@ -1,6 +1,15 @@
-{{- if .Values.serviceAccount.create }}
 apiVersion: v1
-kind: ServiceAccount
+kind: Service
 metadata:
-  name: {{ include "petclinic.fullname" . }}
-{{- end }}
+  name: {{ .Release.Name }}-petclinic-service
+  labels:
+    app: petclinic
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 80
+      targetPort: 8080
+      protocol: TCP
+      name: http
+  selector:
+    app: petclinic
