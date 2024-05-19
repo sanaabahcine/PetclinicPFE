@@ -6,6 +6,7 @@ image:
 
 service:
   type: NodePort
+  port: 8080
 
 autoscaling:
   enabled: false
@@ -15,3 +16,7 @@ autoscaling:
 
 ingress:
   enabled: false
+
+serviceAccount:
+  create: true
+  name: "petclinic-service-account"
