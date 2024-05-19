@@ -4,13 +4,14 @@ image:
   repository: sanaeabahcine371/petclinic1
   tag: latest
 
-ingress:
-  enabled: false
-
-autoscaling:
-  enabled: true
-
 service:
   type: NodePort
-serviceAccount:
-  create: true
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 50
+
+ingress:
+  enabled: false
