@@ -76,8 +76,7 @@ pipeline {
                 ])
             }
         }
-        
-        stage('Update Helm Chart') {
+         stage('Update Helm Chart') {
             steps {
                 script {
                     sh 'git config --global user.email "sanae.abahcine@esi.ac.ma"'
@@ -86,11 +85,10 @@ pipeline {
                     sh 'git add ./petclinic/values.yaml'
                     sh 'git commit -m "Update image tag in values.yaml"'
                     sh 'git pull --rebase origin main'
-                    sh 'git push origin main'
+                    sh 'git push --force origin main'
                 }
             }
         }
-        
         stage('Deploy to AKS') {
             steps {
                 script {
