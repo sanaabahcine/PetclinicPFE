@@ -81,7 +81,8 @@ pipeline {
     steps {
         script {
             def newImageTag = "${DOCKER_HUB_REPO}:${PROJECT_VERSION}"
-sh "sed -i 's|tag:.*|tag: ${newImageTag.split(':')[1]}|' ./helm_chart_petclinic/petclinic/values.yaml"
+sh "sed -i 's|tag:.*|tag: ${newImageTag.split(':')[1]}|'  helm_chart_petclinic/petclinic/values.yaml"
+
         }
     }
 }
