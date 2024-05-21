@@ -71,7 +71,7 @@ pipeline {
             }
         }
         
-      stage('update_helm_chart') {
+  stage('update_helm_chart') {
     steps {
         script {
             // Configuration de l'identité Git dans le pipeline
@@ -88,7 +88,7 @@ pipeline {
             sh 'git add ./petclinic/values.yaml'
             sh 'git commit -m "Update image tag in values.yaml"'
 
-            // Tirer les modifications de la branche main distante
+            // Tirer les modifications de la branche main distante et fusionner
             sh 'git pull --rebase origin main'
 
             // Pousser les modifications dans le dépôt
@@ -96,6 +96,7 @@ pipeline {
         }
     }
 }
+
 
         stage('Deploy to AKS') {
             steps {
