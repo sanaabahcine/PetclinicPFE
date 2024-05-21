@@ -19,6 +19,16 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/sanaabahcine/PetclinicPFE.git'
             }
         }
+         stage('Get Version from Petclinic Code') {
+            steps {
+                script {
+                    // Obtention de la version du projet Petclinic
+                    def version = sh(script: "mvn help:evaluate -Dexpression=project.version -q -DforceStdout", returnStdout: true).trim()
+                    env.PROJECT_VERSION = version
+                }
+            }
+        }
+
     
         stage('mvn compile') {
             steps {
@@ -70,31 +80,29 @@ pipeline {
                 ])
             }
         }
-  stage('Update Helm Chart') {
+stage('Update Helm Chart') {
             steps {
                 script {
                     // Configuration de l'identité Git dans le pipeline
                     sh 'git config --global user.email "sanae.abahcine@esi.ac.ma"'
                     sh 'git config --global user.name "sanaabahcine"'
 
-                    // Obtention de la version du projet PetclinicPFE depuis le dépôt de code (mettre à jour le chemin vers pom.xml si nécessaire)
-                    def version = sh(script: "mvn help:evaluate -Dexpression=project.version -q -DforceStdout", returnStdout: true).trim()
+                    // Modification du fichier values.yaml
+                    sh "sed -i 's/tag: latest/tag: ${PROJECT_VERSION}/g' ./petclinic/values.yaml"
 
-                    // Modification du tag de l'image dans values.yaml
-                    sh "sed -i 's/tag: latest/tag: ${version}/g' ./petclinic/values.yaml"
-
-                    // Ajout des modifications et commit dans le repository Git
+                    // Ajout et commit des modifications
                     sh 'git add ./petclinic/values.yaml'
                     sh 'git commit -m "Update image tag in values.yaml"'
 
-                    // Tirer les modifications de la branche main distante et fusionner
+                    // Tirer les modifications depuis la branche principale distante avec rebase pour éviter les conflits de fusion
                     sh 'git pull --rebase origin main'
 
-                    // Pousser les modifications dans le dépôt Helm chart
+                    // Pousser les modifications locales fusionnées vers la branche principale distante
                     sh 'git push origin main'
                 }
             }
         }
+
 
 
 
