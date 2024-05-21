@@ -93,6 +93,7 @@ pipeline {
             sh 'git config --global user.name "sanaabahcine"'
             sh 'git add ./petclinic/values.yaml'
             sh 'git commit -m "Update image tag in values.yaml"'
+            sh 'git pull origin main'
             sh 'git push origin main'
         }
     }
