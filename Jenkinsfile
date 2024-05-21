@@ -76,16 +76,18 @@ pipeline {
         ])
     }
 }
-    
-    stage('Update Helm Chart') {
+   stage('Update Helm Chart') {
     steps {
         script {
             def newImageTag = "${DOCKER_HUB_REPO}:${PROJECT_VERSION}"
-sh "sed -i 's|tag:.*|tag: ${newImageTag.split(':')[1]}|'  ./petclinic/values.yaml"
-
+            sh "sed -i 's|tag:.*|tag: ${newImageTag.split(':')[1]}|'  ./petclinic/values.yaml"
+            sh "git add ./petclinic/values.yaml"
+            sh "git commit -m 'Update Docker image tag in values.yaml'"
+            sh "git push origin main"
         }
     }
 }
+
         stage('Print Updated values.yaml') {
     steps {
         script {
