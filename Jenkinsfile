@@ -70,6 +70,12 @@ pipeline {
                 ])
             }
         }
+        stage('List Files') {
+    steps {
+        sh 'ls -la /helm_chart_petclinic/petclinic'
+    }
+}
+
         
      stage('update_helm_chart') {
     steps {
