@@ -76,22 +76,22 @@ pipeline {
         ])
     }
 }
-
-         stage('Update Helm Chart') {
-            steps {
-                script {
-                    dir('helm_chart_petclinic') {
-                        sh "git config --global user.email 'sanae.abahcine@esi.ac.ma'"
-                        sh "git config --global user.name 'sanaabahcine'"
-                        sh "sed -i 's/tag: latest/tag: ${PROJECT_VERSION}/g' ./petclinic/values.yaml"
-                        sh "git add ./petclinic/values.yaml"
-                        sh "git commit -m 'Update image tag in values.yaml'"
-                        sh "git pull --rebase origin main"
-                        sh "git push origin main"
-                    }
-                }
+stage('Update Helm Chart') {
+    steps {
+        script {
+            dir('helm_chart_petclinic/petclinic') {
+                sh "git config --global user.email 'sanae.abahcine@esi.ac.ma'"
+                sh "git config --global user.name 'sanaabahcine'"
+                sh "sed -i 's/tag: latest/tag: 5.3.13/g' ./values.yaml"
+                sh "git add ./values.yaml"
+                sh "git commit -m 'Update image tag in values.yaml'"
+                sh "git pull --rebase origin main"
+                sh "git push origin main"
             }
         }
+    }
+}
+
         stage('Deploy to AKS') {
             steps {
                 script {
