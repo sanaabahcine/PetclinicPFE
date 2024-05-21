@@ -64,28 +64,31 @@ pipeline {
             }
         }
         
-        stage('Checkout Helm Repo') {
-            steps {
-                checkout([
-                    $class: 'GitSCM',
-                    branches: [[name: '*/main']],
-                    userRemoteConfigs: [[
-                        url: 'https://github.com/sanaabahcine/helm_chart_petclinic.git',
-                        credentialsId: 'github1'
-                    ]]
-                ])
-            }
-        }
+      stage('Checkout Helm Repo') {
+    steps {
+        checkout([
+            $class: 'GitSCM',
+            branches: [[name: '*/main']],
+            userRemoteConfigs: [[
+                url: 'https://github.com/sanaabahcine/helm_chart_petclinic.git',
+                credentialsId: 'github1'
+            ]]
+        ])
+    }
+}
+
          stage('Update Helm Chart') {
             steps {
                 script {
-                    sh 'git config --global user.email "sanae.abahcine@esi.ac.ma"'
-                    sh 'git config --global user.name "sanaabahcine"'
-                    sh "sed -i 's/tag: latest/tag: ${PROJECT_VERSION}/g' ./petclinic/values.yaml"
-                    sh 'git add ./petclinic/values.yaml'
-                    sh 'git commit -m "Update image tag in values.yaml"'
-                    sh 'git pull --rebase origin main'
-                    sh 'git push --force origin main'
+                    dir('helm_chart_petclinic') {
+                        sh "git config --global user.email 'sanae.abahcine@esi.ac.ma'"
+                        sh "git config --global user.name 'sanaabahcine'"
+                        sh "sed -i 's/tag: latest/tag: ${PROJECT_VERSION}/g' ./petclinic/values.yaml"
+                        sh "git add ./petclinic/values.yaml"
+                        sh "git commit -m 'Update image tag in values.yaml'"
+                        sh "git pull --rebase origin main"
+                        sh "git push origin main"
+                    }
                 }
             }
         }
