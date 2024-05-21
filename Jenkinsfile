@@ -75,29 +75,20 @@ pipeline {
             steps {
                 script {
                     // Définition de l'identité de l'utilisateur Git dans le pipeline
-                    sh 'git config --global user.email "sanae.abahcine@esi.ac.ma"'
-                    sh 'git config --global user.name "sanaabahcine"'
-
-                    // Basculer vers la branche principale
-                    sh 'git checkout main'
-
-                    // Vérification de l'existence du fichier values.yaml
-                    def valuesFile = './petclinic/values.yaml'
-                    if (!fileExists(valuesFile)) {
-                        error "File ${valuesFile} not found"
-                    }
+                    sh 'git config --global user.email "you@example.com"'
+                    sh 'git config --global user.name "Your Name"'
 
                     // Obtention de la version à partir du fichier pom.xml
                     def version = sh(script: "mvn help:evaluate -Dexpression=project.version -q -DforceStdout", returnStdout: true).trim()
 
                     // Modification du tag de l'image dans values.yaml
-                    sh "sed -i 's/tag: latest/tag: ${version}/g' ${valuesFile}"
+                    sh "sed -i 's/tag: latest/tag: ${version}/g' ./petclinic/values.yaml"
 
                     // Ajout des modifications et commit dans le repository Git
-                    sh 'git add ${valuesFile}'
+                    sh 'git add ./petclinic/values.yaml'
                     sh 'git commit -m "Update image tag in values.yaml"'
                     // Pousser les modifications dans le dépôt
-                    sh 'git push origin main'
+                    sh 'git push'
                 }
             }
         }
