@@ -19,18 +19,7 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/sanaabahcine/PetclinicPFE.git'
             }
         }
-        stage('Checkout Helm Repo') {
-            steps {
-                checkout([
-                    $class: 'GitSCM',
-                    branches: [[name: '*/main']], // Spécifiez la branche que vous souhaitez récupérer
-                    userRemoteConfigs: [[
-                        url: 'https://github.com/sanaabahcine/helm_chart_petclinic.git', // URL du nouveau référentiel
-                        credentialsId: 'github1' // ID des identifiants à utiliser
-                    ]]
-                ])
-            }
-        }
+    
         stage('mvn compile') {
             steps {
                 sh 'mvn clean compile'
@@ -62,6 +51,18 @@ pipeline {
                     // Execute a kubectl command to get the list of nodes in the Kubernetes cluster
                     sh "kubectl --kubeconfig=${KUBECONFIG} get nodes"
                 }
+            }
+        }
+            stage('Checkout Helm Repo') {
+            steps {
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: '*/main']], // Spécifiez la branche que vous souhaitez récupérer
+                    userRemoteConfigs: [[
+                        url: 'https://github.com/sanaabahcine/helm_chart_petclinic.git', // URL du nouveau référentiel
+                        credentialsId: 'github1' // ID des identifiants à utiliser
+                    ]]
+                ])
             }
         }
        stage('Deploy to AKS') {
