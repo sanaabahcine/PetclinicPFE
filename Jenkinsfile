@@ -75,6 +75,7 @@ pipeline {
                             credentialsId: 'github1'
                         ]]
                     ])
+                    sh 'git checkout main'
                 }
             }
         }
