@@ -74,28 +74,7 @@ pipeline {
 
         
    
-        stage('update_helm_chart') {
-    steps {
-        script {
-              sh 'git checkout main'
-            // Définition de l'identité de l'utilisateur Git dans le pipeline
-            sh 'git config --global user.email "sanae.abahcine@esi.ac.ma"'
-            sh 'git config --global user.name "sanaabahcine"'
 
-            // Obtention de la version à partir du fichier pom.xml
-            def version = sh(script: "mvn help:evaluate -Dexpression=project.version -q -DforceStdout", returnStdout: true).trim()
-
-            // Modification du tag de l'image dans values.yaml
-            sh "sed -i 's/tag: latest/tag: ${version}/g' helm_chart_petclinic/petclinic/values.yaml"
-
-            // Ajout des modifications et commit dans le repository Git
-            sh 'git add helm_chart_petclinic/petclinic/values.yaml'
-            sh 'git commit -m "Update image tag in values.yaml"'
-            // Pousser les modifications dans le dépôt
-            sh 'git push'
-        }
-    }
-}
 
 
         
