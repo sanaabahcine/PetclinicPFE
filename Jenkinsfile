@@ -73,16 +73,25 @@ pipeline {
   stage('Update Helm Chart') {
             steps {
                 script {
-                    withEnv(['GIT_COMMITTER_NAME=sanaabahcine', 'GIT_COMMITTER_EMAIL=sanae.abahcine@esi.ac.ma']) {
-                        sh 'git checkout main'
-                        sh 'git pull origin main'
-                        sh 'mvn help:evaluate -Dexpression=project.version -q -DforceStdout > version.txt'
-                        def version = readFile('version.txt').trim()
-                        sh "sed -i 's/tag: latest/tag: ${version}/g' ./petclinic/values.yaml"
-                        sh 'git add ./petclinic/values.yaml'
-                        sh 'git commit -m "Update image tag in values.yaml"'
-                        sh 'git push origin main'
-                    }
+                    // Configurer l'utilisateur Git
+                    sh 'git config --global user.email "sanae.abahcine@esi.ac.ma"'
+                    sh 'git config --global user.name "sanaabahcine"'
+                    
+                    // Récupérer la version du projet
+                    def projectVersion = sh(script: 'mvn help:evaluate -Dexpression=project.version -q -DforceStdout', returnStdout: true).trim()
+                    
+                    // Modifier le fichier values.yaml
+                    sh "sed -i 's/tag: latest/tag: ${projectVersion}/g' ./petclinic/values.yaml"
+                    
+                    // Ajouter les modifications à Git
+                    sh 'git add ./petclinic/values.yaml'
+                    sh 'git commit -m "Update image tag in values.yaml"'
+                    
+                    // Tirer les dernières modifications de la branche principale avec l'option --allow-unrelated-histories
+                    sh 'git pull origin main --allow-unrelated-histories --rebase'
+                    
+                    // Pousser les modifications
+                    sh 'git push origin main'
                 }
             }
         }
