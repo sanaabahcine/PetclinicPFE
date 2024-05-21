@@ -87,6 +87,8 @@ pipeline {
                     // Ajout des modifications et commit dans le repository Git
                     sh 'git add ./petclinic/values.yaml'
                     sh 'git commit -m "Update image tag in values.yaml"'
+                     // Pousser les modifications dans le dépôt
+                    sh 'git push'
                 }
             }
         }
