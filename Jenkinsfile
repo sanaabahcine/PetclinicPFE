@@ -76,14 +76,17 @@ pipeline {
         ])
     }
 }
+    
+        
         stage('Update Helm Chart') {
     steps {
         script {
             def newImageTag = "${DOCKER_HUB_REPO}:${PROJECT_VERSION}"
-            sh "sed -i 's|imageTag:.*|imageTag: ${newImageTag}|' ./petclinic/values.yaml"
+            sh "sed -i \"s|tag:.*|tag: '${PROJECT_VERSION}'|\" helm_chart_petclinic/petclinic/values.yaml"
         }
     }
 }
+
 
 
 
