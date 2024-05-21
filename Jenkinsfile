@@ -30,17 +30,21 @@ pipeline {
                 sh 'mvn clean install'
             }
         }
+  
         stage("Build and Push Docker Image") {
             steps {
                 script {
                     // Build the Docker image
                     sh "docker build -t petclinic-image ."
                     
+                    // Extract version from pom.xml
+                    def version = sh(script: "mvn help:evaluate -Dexpression=project.version -q -DforceStdout", returnStdout: true).trim()
+
                     // Tag the Docker image
-                    sh "docker tag petclinic-image sanaeabahcine371/petclinic1:latest"
+                    sh "docker tag petclinic-image sanaeabahcine371/petclinic1:${version}"
                     
                     // Push the Docker image to Docker Hub
-                    sh "docker push sanaeabahcine371/petclinic1:latest"
+                    sh "docker push sanaeabahcine371/petclinic1:${version}"
                 }
             }
         }
