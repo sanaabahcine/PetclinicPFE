@@ -70,8 +70,7 @@ pipeline {
                 ])
             }
         }
-        
-  stage('update_helm_chart') {
+stage('update_helm_chart') {
     steps {
         script {
             // Configuration de l'identité Git dans le pipeline
@@ -91,11 +90,12 @@ pipeline {
             // Tirer les modifications de la branche main distante et fusionner
             sh 'git pull --rebase origin main'
 
-            // Pousser les modifications dans le dépôt
-            sh 'git push origin main'
+            // Forcer la poussée des modifications dans le dépôt
+            sh 'git push -f origin main'
         }
     }
 }
+
 
 
         stage('Deploy to AKS') {
