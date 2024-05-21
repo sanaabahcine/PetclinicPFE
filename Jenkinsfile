@@ -16,7 +16,7 @@ pipeline {
         }
         stage('Checkout From Git') {
             steps {
-                git branch: 'main', url: 'https://github.com/sanaabahcine/PetclinicPFE.git'
+                git branch: 'main', url: 'https://github.com/sanaabahcine/helm_chart_petclinic.git'
             }
         }
         stage('mvn compile') {
