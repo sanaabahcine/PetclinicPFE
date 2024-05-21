@@ -70,11 +70,8 @@ pipeline {
                 ])
             }
         }
-   
-
         
-   
-   stage('update_helm_chart') {
+        stage('update_helm_chart') {
             steps {
                 script {
                     // Définition de l'identité de l'utilisateur Git dans le pipeline
@@ -90,16 +87,13 @@ pipeline {
                     // Ajout des modifications et commit dans le repository Git
                     sh 'git add ./petclinic/values.yaml'
                     sh 'git commit -m "Update image tag in values.yaml"'
+
                     // Pousser les modifications dans le dépôt
+                    sh 'git pull origin main --rebase'
                     sh 'git push origin main'
                 }
             }
         }
-        
-
-
-
-
         
         stage('Deploy to AKS') {
             steps {
