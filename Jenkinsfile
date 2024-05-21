@@ -48,36 +48,6 @@ pipeline {
                 }
             }
         }
-
-    stage('Checkout Helm Repo') {
-            steps {
-                checkout([
-                    $class: 'GitSCM',
-                    branches: [[name: '*/main']], 
-                    userRemoteConfigs: [[
-                        url: 'https://github.com/sanaabahcine/helm_chart_petclinic.git', 
-                        credentialsId: 'github1' 
-                    ]]
-                ])
-            }
-        }
-        
-        
-        stage('update_helm_chart') {
-            steps {
-                script {
-                    def version = sh(script: "mvn help:evaluate -Dexpression=project.version -q -DforceStdout", returnStdout: true).trim()
-                    
-                    // Replace the tag in values.yaml with the newly built Docker image tag
-                    sh "sed -i 's/tag: latest/tag: ${version}/g' ./petclinic/values.yaml"
-                    
-                    // Commit and push the changes back to the repository
-                    sh "git add ./petclinic/values.yaml"
-                    sh "git commit -m 'Update image tag in values.yaml'"
-                    sh "git push origin main"
-                }
-            }
-        }
  
         stage('Check Kubernetes Connectivity') {
             steps {
@@ -88,7 +58,39 @@ pipeline {
             }
         }
         
-    
+        stage('Checkout Helm Repo') {
+            steps {
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: '*/main']], // Spécifiez la branche que vous souhaitez récupérer
+                    userRemoteConfigs: [[
+                        url: 'https://github.com/sanaabahcine/helm_chart_petclinic.git', // URL du nouveau référentiel
+                        credentialsId: 'github1' // ID des identifiants à utiliser
+                    ]]
+                ])
+            }
+        }
+        
+        stage('update_helm_chart') {
+            steps {
+                script {
+                    // Définition de l'identité de l'utilisateur Git dans le pipeline
+                    sh 'git config --global user.email "sanae.abahcine@esi.ac.ma"'
+                    sh 'git config --global user.name "sanaabahcine"'
+
+                    // Obtention de la version à partir du fichier pom.xml
+                    def version = sh(script: "mvn help:evaluate -Dexpression=project.version -q -DforceStdout", returnStdout: true).trim()
+
+                    // Modification du tag de l'image dans values.yaml
+                    sh 'sed -i "s/tag: latest/tag: ${version}/g" ./petclinic/values.yaml'
+
+                    // Ajout des modifications et commit dans le repository Git
+                    sh 'git add ./petclinic/values.yaml'
+                    sh 'git commit -m "Update image tag in values.yaml"'
+                }
+            }
+        }
+        
         stage('Deploy to AKS') {
             steps {
                 script {
