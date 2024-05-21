@@ -48,6 +48,20 @@ pipeline {
                 }
             }
         }
+
+    stage('Checkout Helm Repo') {
+            steps {
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: '*/main']], 
+                    userRemoteConfigs: [[
+                        url: 'https://github.com/sanaabahcine/helm_chart_petclinic.git', 
+                        credentialsId: 'github1' 
+                    ]]
+                ])
+            }
+        }
+        
         
         stage('update_helm_chart') {
             steps {
@@ -74,19 +88,7 @@ pipeline {
             }
         }
         
-        stage('Checkout Helm Repo') {
-            steps {
-                checkout([
-                    $class: 'GitSCM',
-                    branches: [[name: '*/main']], 
-                    userRemoteConfigs: [[
-                        url: 'https://github.com/sanaabahcine/helm_chart_petclinic.git', 
-                        credentialsId: 'github1' 
-                    ]]
-                ])
-            }
-        }
-        
+    
         stage('Deploy to AKS') {
             steps {
                 script {
