@@ -75,8 +75,8 @@ pipeline {
             steps {
                 script {
                     // Définition de l'identité de l'utilisateur Git dans le pipeline
-                    sh 'git config --global user.email "you@example.com"'
-                    sh 'git config --global user.name "Your Name"'
+                    sh 'git config --global user.email "sanae.abahcine@esi.ac.ma"'
+                    sh 'git config --global user.name "sanaabahcine"'
 
                     // Obtention de la version à partir du fichier pom.xml
                     def version = sh(script: "mvn help:evaluate -Dexpression=project.version -q -DforceStdout", returnStdout: true).trim()
