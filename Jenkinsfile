@@ -64,59 +64,51 @@ pipeline {
             }
         }
         
-      stage('Checkout Helm Repo') {
-    steps {
-        checkout([
-            $class: 'GitSCM',
-            branches: [[name: '*/main']],
-            userRemoteConfigs: [[
-                url: 'https://github.com/sanaabahcine/helm_chart_petclinic.git',
-                credentialsId: 'github1'
-            ]]
-        ])
-    }
-}
-   stage('Update Helm Chart') {
-    steps {
-        script {
-            def newImageTag = "${DOCKER_HUB_REPO}:${PROJECT_VERSION}"
-            sh "sed -i 's|tag:.*|tag: ${newImageTag.split(':')[1]}|'  ./petclinic/values.yaml"
-          
+        stage('Checkout Helm Repo') {
+            steps {
+                dir('helm_chart_petclinic') {
+                    checkout([
+                        $class: 'GitSCM',
+                        branches: [[name: '*/main']],
+                        userRemoteConfigs: [[
+                            url: 'https://github.com/sanaabahcine/helm_chart_petclinic.git',
+                            credentialsId: 'github1'
+                        ]]
+                    ])
+                }
+            }
         }
-    }
-}
 
-   stage('Commit and Push Changes to Helm Repository') {
-    steps {
-        script {
-            sh 'git config --global user.email "sanae.abahcine@esi.ac.ma"'
-            sh 'git config --global user.name "sanaabahcine"'
-            sh 'git add ./petclinic/values.yaml'
-            sh 'git commit -m "Update image tag in values.yaml"'
-            sh 'git push -f origin main' // Utiliser -f pour forcer la poussée
+        stage('Update Helm Chart') {
+            steps {
+                dir('helm_chart_petclinic') {
+                    script {
+                        def newImageTag = "${DOCKER_HUB_REPO}:${PROJECT_VERSION}"
+                        sh "sed -i 's|tag:.*|tag: ${newImageTag.split(':')[1]}|' ./petclinic/values.yaml"
+                    }
+                }
+            }
         }
-    }
-}
 
-
-
-        stage('Print Updated values.yaml') {
-    steps {
-        script {
-            sh "cat ./petclinic/values.yaml"
+        stage('Commit and Push Changes to Helm Repository') {
+            steps {
+                dir('helm_chart_petclinic') {
+                    script {
+                        sh 'git config --global user.email "sanae.abahcine@esi.ac.ma"'
+                        sh 'git config --global user.name "sanaabahcine"'
+                        sh 'git add ./petclinic/values.yaml'
+                        sh 'git commit -m "Update image tag in values.yaml"'
+                        sh 'git pull origin main --rebase'
+                        sh 'git push origin main'
+                    }
+                }
+            }
         }
-    }
-}
-
-
-
-
-
 
         stage('Deploy to AKS') {
             steps {
                 script {
-                    sh "helm upgrade --install petclinic ./petclinic --values ./petclinic/values.yaml --kubeconfig=${KUBECONFIG}"
+                    sh "helm upgrade --install petclinic ./helm_chart_petclinic/petclinic --values ./helm_chart_petclinic/petclinic/values.yaml --kubeconfig=${KUBECONFIG}"
                 }
             }
         }
