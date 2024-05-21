@@ -91,7 +91,7 @@ pipeline {
         script {
             sh 'git config --global user.email "sanae.abahcine@esi.ac.ma"'
             sh 'git config --global user.name "sanaabahcine"'
-            sh 'git add ./helm_chart_petclinic/petclinic/values.yaml'
+            sh 'git add ./petclinic/values.yaml'
             sh 'git commit -m "Update image tag in values.yaml"'
             sh 'git push origin main'
         }
