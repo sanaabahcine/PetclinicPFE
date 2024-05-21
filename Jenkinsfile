@@ -91,7 +91,7 @@ stage('update_helm_chart') {
             sh 'git pull --rebase origin main'
 
             // Forcer la poussée des modifications dans le dépôt
-            sh 'git push -f origin main'
+            sh 'git push origin main'
         }
     }
 }
