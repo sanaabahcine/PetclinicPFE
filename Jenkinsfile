@@ -74,7 +74,7 @@ pipeline {
 
         
    
-        stage('update_helm_chart') {
+   stage('update_helm_chart') {
             steps {
                 script {
                     // Définition de l'identité de l'utilisateur Git dans le pipeline
@@ -85,16 +85,17 @@ pipeline {
                     def version = sh(script: "mvn help:evaluate -Dexpression=project.version -q -DforceStdout", returnStdout: true).trim()
 
                     // Modification du tag de l'image dans values.yaml
-                    sh "sed -i 's/tag: latest/tag: ${version}/g' petclinic/values.yaml"
+                    sh "sed -i 's/tag: latest/tag: ${version}/g' ./petclinic/values.yaml"
 
                     // Ajout des modifications et commit dans le repository Git
-                    sh 'git add petclinic/values.yaml'
+                    sh 'git add ./petclinic/values.yaml'
                     sh 'git commit -m "Update image tag in values.yaml"'
                     // Pousser les modifications dans le dépôt
                     sh 'git push origin main'
                 }
             }
         }
+        
 
 
 
