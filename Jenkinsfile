@@ -86,18 +86,18 @@ pipeline {
     }
 }
 
-        stage('Commit and Push Changes to Helm Repository') {
+   stage('Commit and Push Changes to Helm Repository') {
     steps {
         script {
             sh 'git config --global user.email "sanae.abahcine@esi.ac.ma"'
             sh 'git config --global user.name "sanaabahcine"'
             sh 'git add ./petclinic/values.yaml'
             sh 'git commit -m "Update image tag in values.yaml"'
-            sh 'git pull origin main'
-            sh 'git push origin main'
+            sh 'git push -f origin main' // Utiliser -f pour forcer la poussée
         }
     }
 }
+
 
 
         stage('Print Updated values.yaml') {
