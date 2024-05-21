@@ -73,24 +73,24 @@ pipeline {
   stage('Update Helm Chart') {
             steps {
                 script {
-                    // Configurer l'utilisateur Git
+                    // Configuration de l'identité Git dans le pipeline
                     sh 'git config --global user.email "sanae.abahcine@esi.ac.ma"'
                     sh 'git config --global user.name "sanaabahcine"'
-                    
-                    // Récupérer la version du projet
-                    def projectVersion = sh(script: 'mvn help:evaluate -Dexpression=project.version -q -DforceStdout', returnStdout: true).trim()
-                    
-                    // Modifier le fichier values.yaml
-                    sh "sed -i 's/tag: latest/tag: ${projectVersion}/g' ./petclinic/values.yaml"
-                    
-                    // Ajouter les modifications à Git
+
+                    // Obtention de la version du projet PetclinicPFE depuis le dépôt de code (mettre à jour le chemin vers pom.xml si nécessaire)
+                    def version = sh(script: "mvn help:evaluate -Dexpression=project.version -q -DforceStdout", returnStdout: true).trim()
+
+                    // Modification du tag de l'image dans values.yaml
+                    sh "sed -i 's/tag: latest/tag: ${version}/g' ./petclinic/values.yaml"
+
+                    // Ajout des modifications et commit dans le repository Git
                     sh 'git add ./petclinic/values.yaml'
                     sh 'git commit -m "Update image tag in values.yaml"'
-                    
-                    // Tirer les dernières modifications de la branche principale avec l'option --allow-unrelated-histories
-                    sh 'git pull origin main --allow-unrelated-histories --rebase'
-                    
-                    // Pousser les modifications
+
+                    // Tirer les modifications de la branche main distante et fusionner
+                    sh 'git pull --rebase origin main'
+
+                    // Pousser les modifications dans le dépôt Helm chart
                     sh 'git push origin main'
                 }
             }
