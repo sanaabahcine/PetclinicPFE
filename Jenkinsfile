@@ -14,9 +14,21 @@ pipeline {
                 cleanWs()
             }
         }
-        stage('Checkout From Git') {
+        stage('Checkout Main Repo') {
             steps {
-                git branch: 'main', url: 'https://github.com/sanaabahcine/helm_chart_petclinic.git'
+                git branch: 'main', url: 'https://github.com/sanaabahcine/PetclinicPFE.git'
+            }
+        }
+        stage('Checkout Helm Repo') {
+            steps {
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: '*/main']], // Spécifiez la branche que vous souhaitez récupérer
+                    userRemoteConfigs: [[
+                        url: 'https://github.com/sanaabahcine/helm_chart_petclinic.git', // URL du nouveau référentiel
+                        credentialsId: 'github1' // ID des identifiants à utiliser
+                    ]]
+                ])
             }
         }
         stage('mvn compile') {
