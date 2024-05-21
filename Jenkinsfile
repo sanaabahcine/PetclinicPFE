@@ -85,6 +85,14 @@ pipeline {
         }
     }
 }
+        stage('Print Updated values.yaml') {
+    steps {
+        script {
+            sh "cat ./petclinic/values.yaml"
+        }
+    }
+}
+
 
 
 
