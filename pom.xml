@@ -311,27 +311,45 @@
             </testResource>
         </testResources>
         <plugins>
-                 <plugin>
-    <groupId>org.apache.maven.plugins</groupId>
-    <artifactId>maven-exec-plugin</artifactId>
-    <version>3.0.0</version> <!-- Utilisez la version la plus récente -->
-    <executions>
-        <execution>
-            <id>set-project-version-property</id>
-            <phase>initialize</phase> <!-- Choisissez la phase qui convient le mieux à votre cas -->
-            <goals>
-                <goal>exec</goal>
-            </goals>
+               <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>1.6.0</version>
+            <executions>
+                <execution>
+                    <id>set-project-version-property</id>
+                    <phase>initialize</phase>
+                    <goals>
+                        <goal>exec</goal>
+                    </goals>
+                    <configuration>
+                        <executable>echo</executable>
+                        <arguments>
+                            <argument>${project.version}</argument>
+                        </arguments>
+                        <propertyName>projectVersion</propertyName>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+        
+        <!-- Plugin jib-maven-plugin pour construire et pousser l'image Docker -->
+        <plugin>
+            <groupId>com.google.cloud.tools</groupId>
+            <artifactId>jib-maven-plugin</artifactId>
+            <version>${docker.jib-maven-plugin.version}</version>
             <configuration>
-                <executable>echo</executable>
-                <arguments>
-                    <argument>${project.version}</argument>
-                </arguments>
-                <propertyName>projectVersion</propertyName>
+                <to>
+                    <image>docker.io/${docker.image.prefix}/${project.artifactId}</image>
+                    <tags>
+                        <!-- Utilisez la propriété pour le tag de l'image Docker -->
+                        <tag>${projectVersion}</tag>
+                        <tag>latest</tag>
+                    </tags>
+                </to>
             </configuration>
-        </execution>
-    </executions>
-</plugin>
+        </plugin>
+        
 
 <plugin>
     <groupId>org.codehaus.mojo</groupId>
