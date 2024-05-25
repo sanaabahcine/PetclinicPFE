@@ -37,7 +37,7 @@ pipeline {
             }
         }
         
-    stage('mvn build') {
+stage('mvn build') {
     steps {
         sh 'mvn clean install'
         script {
@@ -46,6 +46,7 @@ pipeline {
             env.PROJECT_VERSION = version
         }
     }
+}
 }
 
   
