@@ -380,36 +380,27 @@
                 </configuration>
             </plugin>
 
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>${jacoco-maven-plugin}</version>
-                <executions>
-                         <execution>
-        <id>update-version</id>
-        <goals>
-            <goal>set</goal>
-            <goal>update-parent</goal>
-        </goals>
-        <configuration>
-            <property>project.version</property>
-            <newVersion>${project.version}-SNAPSHOT</newVersion> <!-- Version snapshot pour un développement continu -->
-        </configuration>
-    </execution>
-                    <execution>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>report</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+         <plugin>
+    <groupId>org.jacoco</groupId>
+    <artifactId>jacoco-maven-plugin</artifactId>
+    <version>${jacoco-maven-plugin}</version>
+    <executions>
+        <execution>
+            <id>prepare-agent</id>
+            <goals>
+                <goal>prepare-agent</goal>
+            </goals>
+        </execution>
+        <execution>
+            <id>report</id>
+            <phase>prepare-package</phase>
+            <goals>
+                <goal>report</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+
 
             <!--Specify the encoding for copying resources-->
             <plugin>
