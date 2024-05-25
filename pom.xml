@@ -311,61 +311,27 @@
             </testResource>
         </testResources>
         <plugins>
-                 <build>
-    <plugins>
-        <!-- Plugin versions-maven-plugin pour la gestion automatique des versions -->
-        <plugin>
+                 <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>versions-maven-plugin</artifactId>
             <version>2.8.1</version>
         </plugin>
-    </plugins>
-</build>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+            </plugin>
 
-            
-        
-        <!-- Plugin jib-maven-plugin pour construire et pousser l'image Docker -->
-        <plugin>
-            <groupId>com.google.cloud.tools</groupId>
-            <artifactId>jib-maven-plugin</artifactId>
-            <version>${docker.jib-maven-plugin.version}</version>
-            <configuration>
-                <to>
-                    <image>docker.io/${docker.image.prefix}/${project.artifactId}</image>
-                    <tags>
-                        <!-- Utilisez la propriété pour le tag de l'image Docker -->
-                        <tag>${projectVersion}</tag>
-                        <tag>latest</tag>
-                    </tags>
-                </to>
-            </configuration>
-        </plugin>
-        
-
-<plugin>
-    <groupId>org.codehaus.mojo</groupId>
-    <artifactId>exec-maven-plugin</artifactId>
-    <version>1.6.0</version>
-    <executions>
-        <execution>
-            <id>set-project-version-property</id>
-            <phase>initialize</phase>
-            <goals>
-                <goal>exec</goal>
-            </goals>
-            <configuration>
-                <executable>echo</executable>
-                <arguments>
-                    <argument>${project.version}</argument>
-                </arguments>
-                <propertyName>projectVersion</propertyName>
-            </configuration>
-        </execution>
-    </executions>
-</plugin>
-
-
-            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin.version}</version>
+                <configuration>
+                    <includes>
+                        <include>**/*Tests.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -419,6 +385,17 @@
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>${jacoco-maven-plugin}</version>
                 <executions>
+                         <execution>
+        <id>update-version</id>
+        <goals>
+            <goal>set</goal>
+            <goal>update-parent</goal>
+        </goals>
+        <configuration>
+            <property>project.version</property>
+            <newVersion>${project.version}-SNAPSHOT</newVersion> <!-- Version snapshot pour un développement continu -->
+        </configuration>
+    </execution>
                     <execution>
                         <goals>
                             <goal>prepare-agent</goal>
@@ -492,7 +469,7 @@
                     <to>
                         <image>docker.io/${docker.image.prefix}/${project.artifactId}</image>
                         <tags>
-                           
+                            <tag>${project.version}</tag>
                             <tag>latest</tag>
                         </tags>
                     </to>
