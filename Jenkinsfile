@@ -1,4 +1,4 @@
-pipeline {
+ pipeline {
     agent any
     
     tools {
@@ -91,29 +91,30 @@ pipeline {
             }
         }
 
-        stage('Commit and Push Changes to Helm Repository') {
-            steps {
-                dir('helm_chart_petclinic') {
-                    script {
-                        sh 'git config --global user.email "sanae.abahcine@esi.ac.ma"'
-                        sh 'git config --global user.name "sanaabahcine"'
-                        
-                        // Vérifier s'il y a des modifications dans le répertoire de travail
-                        def gitStatus = sh(script: 'git status --porcelain', returnStatus: true)
-                        
-                        if (gitStatus != 0) {
-                            // S'il y a des modifications, ajouter, valider et pousser les modifications
-                            sh 'git add ./petclinic/values.yaml'
-                            sh 'git commit -m "Update image tag in values.yaml"'
-                            sh 'git pull origin main --rebase'
-                            sh 'git push origin main'
-                        } else {
-                            echo 'Aucune modification à valider et à pousser.'
-                        }
-                    }
+      stage('Commit and Push Changes to Helm Repository') {
+    steps {
+        dir('helm_chart_petclinic') {
+            script {
+                sh 'git config --global user.email "sanae.abahcine@esi.ac.ma"'
+                sh 'git config --global user.name "sanaabahcine"'
+                
+                // Vérifier s'il y a des modifications dans le répertoire de travail
+                def gitStatus = sh(script: 'git status --porcelain', returnStatus: true)
+                
+                if (gitStatus != 0) {
+                    // S'il y a des modifications, ajouter, valider et pousser les modifications
+                    sh 'git add ./petclinic/values.yaml'
+                    sh 'git commit -m "Update image tag in values.yaml"'
+                    sh 'git pull origin main --rebase'
+                    sh 'git push origin main'
+                } else {
+                    echo 'Aucune modification à valider et à pousser.'
                 }
             }
         }
+    }
+}
+
 
         stage('Deploy to AKS') {
             steps {
