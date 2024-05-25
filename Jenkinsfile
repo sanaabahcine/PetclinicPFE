@@ -42,7 +42,11 @@ pipeline {
         
         stage('mvn build') {
             steps {
-                sh 'mvn clean install'
+                script {
+                    // Incrémenter automatiquement la version du projet
+                    sh 'mvn versions:set -DnewVersion=release-${env.BUILD_NUMBER}'
+                    sh 'mvn clean install'
+                }
             }
         }
   
