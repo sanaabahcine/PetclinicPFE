@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.springframework.samples</groupId>
     <artifactId>spring-framework-petclinic</artifactId>
-   <version>${project.version}</version>
+<version>1.0-${timestamp}</version>
 
     <name>Spring Framework Petclinic</name>
     <packaging>war</packaging>
@@ -313,18 +313,23 @@
         <plugins>
                  
     <plugin>
-    <groupId>pl.project13.maven</groupId>
-    <artifactId>git-commit-id-plugin</artifactId>
-    <version>4.0.0</version>
-    <executions>
-        <execution>
-            <id>git-commit-id</id>
-            <goals>
-                <goal>revision</goal>
-            </goals>
-        </execution>
-    </executions>
-</plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>build-helper-maven-plugin</artifactId>
+            <version>3.2.0</version>
+            <executions>
+                <execution>
+                    <id>timestamp-property</id>
+                    <goals>
+                        <goal>timestamp-property</goal>
+                    </goals>
+                    <configuration>
+                        <name>timestamp</name>
+                        <pattern>yyyyMMddHHmmss</pattern>
+                        <timeZone>UTC</timeZone>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
 
 
             <plugin>
