@@ -25,30 +25,26 @@ pipeline {
             }
         }
         
-        stage('Update Project Version') {
+        stage('Get Version from Petclinic Code') {
             steps {
-                sh 'mvn versions:set versions:update-parent -DgenerateBackupPoms=false'
+                script {
+                    def version = sh(script: "mvn help:evaluate -Dexpression=project.version -q -DforceStdout", returnStdout: true).trim()
+                    env.PROJECT_VERSION = version
+                }
             }
         }
-        
+    
         stage('mvn compile') {
             steps {
                 sh 'mvn clean compile'
             }
         }
         
-stage('mvn build') {
-    steps {
-        sh 'mvn clean install'
-        script {
-            // Extraire la version du projet à partir du fichier pom.xml
-            def version = sh(script: 'mvn help:evaluate -Dexpression=project.version -q -DforceStdout', returnStdout: true).trim()
-            env.PROJECT_VERSION = version
+        stage('mvn build') {
+            steps {
+                sh 'mvn clean install'
+            }
         }
-    }
-}
-
-
   
         stage("Build and Push Docker Image") {
             steps {
