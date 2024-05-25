@@ -40,15 +40,16 @@ pipeline {
             }
         }
         
-        stage('mvn build') {
-            steps {
-                script {
-                    // Incrémenter automatiquement la version du projet
-                    sh 'mvn versions:set -DnewVersion=release-${env.BUILD_NUMBER}'
-                    sh 'mvn clean install'
-                }
-            }
+     stage('mvn build') {
+    steps {
+        script {
+            // Incrémenter automatiquement la version du projet
+            sh 'mvn versions:set -DnewVersion=release-${BUILD_NUMBER}'
+            sh 'mvn clean install'
         }
+    }
+}
+
   
         stage("Build and Push Docker Image") {
             steps {
