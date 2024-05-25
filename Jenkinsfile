@@ -25,16 +25,12 @@ pipeline {
             }
         }
         
-        stage('Get Version from Petclinic Code') {
+        stage('Update Project Version') {
             steps {
-                script {
-                    // Récupérer la version du projet depuis le pom.xml
-                    def version = sh(script: "mvn help:evaluate -Dexpression=project.version -q -DforceStdout", returnStdout: true).trim()
-                    env.PROJECT_VERSION = version
-                }
+                sh 'mvn versions:set versions:update-parent -DgenerateBackupPoms=false'
             }
         }
-    
+        
         stage('mvn compile') {
             steps {
                 sh 'mvn clean compile'
@@ -50,7 +46,6 @@ pipeline {
         stage("Build and Push Docker Image") {
             steps {
                 script {
-                    // Utiliser la variable PROJECT_VERSION pour tagger l'image Docker
                     sh "docker build -t petclinic-image ."
                     sh "docker tag petclinic-image ${DOCKER_HUB_REPO}:${PROJECT_VERSION}"
                     sh "docker push ${DOCKER_HUB_REPO}:${PROJECT_VERSION}"
