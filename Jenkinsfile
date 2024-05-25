@@ -56,13 +56,6 @@
             }
         }
  
-        stage('Check Kubernetes Connectivity') {
-            steps {
-                script {
-                    sh "kubectl --kubeconfig=${KUBECONFIG} get nodes"
-                }
-            }
-        }
         
         stage('Checkout Helm Repo') {
             steps {
