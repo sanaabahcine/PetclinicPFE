@@ -334,36 +334,29 @@
 </plugin>
 
 <plugin>
-    <groupId>com.google.cloud.tools</groupId>
-    <artifactId>jib-maven-plugin</artifactId>
-    <version>${docker.jib-maven-plugin.version}</version>
-    <configuration>
-        <to>
-            <image>docker.io/${docker.image.prefix}/${project.artifactId}</image>
-            <tags>
-                <tag>${projectVersion}</tag> <!-- Utilisez la propriété nouvellement créée ici -->
-                <tag>latest</tag>
-            </tags>
-        </to>
-    </configuration>
+    <groupId>org.codehaus.mojo</groupId>
+    <artifactId>exec-maven-plugin</artifactId>
+    <version>1.6.0</version>
+    <executions>
+        <execution>
+            <id>set-project-version-property</id>
+            <phase>initialize</phase>
+            <goals>
+                <goal>exec</goal>
+            </goals>
+            <configuration>
+                <executable>echo</executable>
+                <arguments>
+                    <argument>${project.version}</argument>
+                </arguments>
+                <propertyName>projectVersion</propertyName>
+            </configuration>
+        </execution>
+    </executions>
 </plugin>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven-compiler-plugin.version}</version>
-            </plugin>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>${maven-surefire-plugin.version}</version>
-                <configuration>
-                    <includes>
-                        <include>**/*Tests.java</include>
-                    </includes>
-                </configuration>
-            </plugin>
+            
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
