@@ -322,38 +322,7 @@
     </plugins>
 </build>
 
-               <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>exec-maven-plugin</artifactId>
-            <version>1.6.0</version>
-            <executions>
-                       <execution>
-        <id>update-version</id>
-        <goals>
-            <goal>set</goal>
-            <goal>update-parent</goal>
-        </goals>
-        <configuration>
-            <property>project.version</property>
-            <newVersion>${project.version}-SNAPSHOT</newVersion> <!-- Version snapshot pour un développement continu -->
-        </configuration>
-    </execution>
-                <execution>
-                    <id>set-project-version-property</id>
-                    <phase>initialize</phase>
-                    <goals>
-                        <goal>exec</goal>
-                    </goals>
-                    <configuration>
-                        <executable>echo</executable>
-                        <arguments>
-                            <argument>${project.version}</argument>
-                        </arguments>
-                        <propertyName>projectVersion</propertyName>
-                    </configuration>
-                </execution>
-            </executions>
-        </plugin>
+            
         
         <!-- Plugin jib-maven-plugin pour construire et pousser l'image Docker -->
         <plugin>
