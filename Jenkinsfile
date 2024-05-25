@@ -37,16 +37,17 @@ pipeline {
             }
         }
         
-        stage('mvn build') {
-            steps {
-                sh 'mvn clean install'
-                // Extrait la version du projet à partir du fichier pom.xml
-                script {
-                    def pom = readMavenPom file: 'pom.xml'
-                    env.PROJECT_VERSION = pom.version
-                }
-            }
+    stage('mvn build') {
+    steps {
+        sh 'mvn clean install'
+        script {
+            // Extraire la version du projet à partir du fichier pom.xml
+            def version = sh(script: 'mvn help:evaluate -Dexpression=project.version -q -DforceStdout', returnStdout: true).trim()
+            env.PROJECT_VERSION = version
         }
+    }
+}
+
   
         stage("Build and Push Docker Image") {
             steps {
