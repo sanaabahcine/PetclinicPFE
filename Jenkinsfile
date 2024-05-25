@@ -47,7 +47,7 @@ stage('mvn build') {
         }
     }
 }
-}
+
 
   
         stage("Build and Push Docker Image") {
