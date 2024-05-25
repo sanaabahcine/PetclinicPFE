@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.springframework.samples</groupId>
     <artifactId>spring-framework-petclinic</artifactId>
-<version>1.0-${timestamp}</version>
+    <version>5.3.13</version>
 
     <name>Spring Framework Petclinic</name>
     <packaging>war</packaging>
@@ -311,26 +311,42 @@
             </testResource>
         </testResources>
         <plugins>
-                 
-    <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>build-helper-maven-plugin</artifactId>
-            <version>3.2.0</version>
-            <executions>
-                <execution>
-                    <id>timestamp-property</id>
-                    <goals>
-                        <goal>timestamp-property</goal>
-                    </goals>
-                    <configuration>
-                        <name>timestamp</name>
-                        <pattern>yyyyMMddHHmmss</pattern>
-                        <timeZone>UTC</timeZone>
-                    </configuration>
-                </execution>
-            </executions>
-        </plugin>
+                 <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-exec-plugin</artifactId>
+    <version>3.0.0</version> <!-- Utilisez la version la plus récente -->
+    <executions>
+        <execution>
+            <id>set-project-version-property</id>
+            <phase>initialize</phase> <!-- Choisissez la phase qui convient le mieux à votre cas -->
+            <goals>
+                <goal>exec</goal>
+            </goals>
+            <configuration>
+                <executable>echo</executable>
+                <arguments>
+                    <argument>${project.version}</argument>
+                </arguments>
+                <propertyName>projectVersion</propertyName>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
 
+<plugin>
+    <groupId>com.google.cloud.tools</groupId>
+    <artifactId>jib-maven-plugin</artifactId>
+    <version>${docker.jib-maven-plugin.version}</version>
+    <configuration>
+        <to>
+            <image>docker.io/${docker.image.prefix}/${project.artifactId}</image>
+            <tags>
+                <tag>${projectVersion}</tag> <!-- Utilisez la propriété nouvellement créée ici -->
+                <tag>latest</tag>
+            </tags>
+        </to>
+    </configuration>
+</plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -474,13 +490,12 @@
                     <to>
                         <image>docker.io/${docker.image.prefix}/${project.artifactId}</image>
                         <tags>
-                            <tag>${project.version}</tag>
+                           
                             <tag>latest</tag>
                         </tags>
                     </to>
                 </configuration>
             </plugin>
-                 
 
         </plugins>
     </build>
