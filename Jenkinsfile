@@ -37,21 +37,28 @@ pipeline {
             }
         }
         
-        stage('mvn build') {
-            steps {
-                sh 'mvn clean install'
-            }
+       stage('mvn build') {
+    steps {
+        sh 'mvn clean install'
+        // Extrait la version du projet à partir du fichier pom.xml
+        script {
+            def pom = readMavenPom file: 'pom.xml'
+            env.PROJECT_VERSION = pom.version
         }
+    }
+}
+}
   
-        stage("Build and Push Docker Image") {
-            steps {
-                script {
-                    sh "docker build -t petclinic-image ."
-                    sh "docker tag petclinic-image ${DOCKER_HUB_REPO}:${PROJECT_VERSION}"
-                    sh "docker push ${DOCKER_HUB_REPO}:${PROJECT_VERSION}"
-                }
-            }
+       stage("Build and Push Docker Image") {
+    steps {
+        script {
+            sh "docker build -t petclinic-image ."
+            sh "docker tag petclinic-image ${DOCKER_HUB_REPO}:${PROJECT_VERSION}"
+            sh "docker push ${DOCKER_HUB_REPO}:${PROJECT_VERSION}"
         }
+    }
+}
+
  
         stage('Check Kubernetes Connectivity') {
             steps {
