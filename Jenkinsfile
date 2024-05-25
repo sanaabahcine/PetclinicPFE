@@ -109,7 +109,7 @@
 }
 
 
-        stage('Deploy to AKS') {
+        stage('Deployement') {
             steps {
                 script {
                     sh "helm upgrade --install petclinic ./helm_chart_petclinic/petclinic --values ./helm_chart_petclinic/petclinic/values.yaml --kubeconfig=${KUBECONFIG}"
