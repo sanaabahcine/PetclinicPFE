@@ -40,17 +40,17 @@
             }
         }
         
-        
-    stage('Unit Tests') {
-    steps {
-        sh 'mvn clean test jacoco:report'
-    }
-    post {
-        always {
-            junit 'target/surefire-reports/*.xml'  // Archive JUnit reports for Jenkins
+        stage('Unit Tests') {
+            steps {
+                sh 'mvn clean test jacoco:report'
+            }
+            post {
+                always {
+                    junit 'target/surefire-reports/*.xml'  // Archive JUnit reports for Jenkins
+                }
+            }
         }
-    }
-}
+
         stage("Sonarqube Analysis") {
             steps {
                 withSonarQubeEnv('SonarQube-Server') {
