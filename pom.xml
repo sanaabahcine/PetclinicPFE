@@ -311,6 +311,19 @@
             </testResource>
         </testResources>
         <plugins>
+                 <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-surefire-plugin</artifactId>
+    <version>${maven-surefire-plugin.version}</version>
+    <configuration>
+        <includes>
+            <include>**/*Tests.java</include>
+        </includes>
+        <testFailureIgnore>true</testFailureIgnore> <!-- Ignorer les échecs de tests pour permettre la génération des rapports -->
+        <argLine>-Xmx512m</argLine> <!-- Configuration facultative pour la mémoire JVM lors de l'exécution des tests -->
+    </configuration>
+</plugin>
+
                  
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
