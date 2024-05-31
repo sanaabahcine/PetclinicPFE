@@ -51,18 +51,19 @@
             }
         }
 
-        stage("Sonarqube Analysis") {
-            steps {
-                withSonarQubeEnv('SonarQube-Server') {
-                    sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectKey=Petclinic \
-                        -Dsonar.projectName=Petclinic \
-                        -Dsonar.projectVersion=1.0 \
-                        -Dsonar.sources=src/ \
-                        -Dsonar.java.binaries=. \
-                        -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
-                }
-            }
+       stage("Sonarqube Analysis") {
+    steps {
+        withSonarQubeEnv('SonarQube-Server') {
+            sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectKey=Petclinic \
+                -Dsonar.projectName=Petclinic \
+                -Dsonar.projectVersion=1.0 \
+                -Dsonar.sources=src/ \
+                -Dsonar.java.binaries=. \
+                -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml '''
         }
+    }
+}
+
      stage('mvn build') {
             steps {
                 sh 'mvn clean install'
