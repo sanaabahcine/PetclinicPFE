@@ -55,7 +55,7 @@
                 }
             }
         }
-     stage("Sonarqube Analysis") {
+   stage("Sonarqube Analysis") {
             steps {
                 withSonarQubeEnv('SonarQube-Server') {
                     sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectKey=Petclinic \
