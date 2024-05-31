@@ -1,4 +1,4 @@
- pipeline {
+pipeline {
     agent any
     
     tools {
@@ -47,30 +47,33 @@
             post {
                 always {
                     junit 'target/surefire-reports/*.xml'  // Archive JUnit reports for Jenkins
+                    jacoco execPattern: 'target/jacoco.exec'  // Archive JaCoCo reports
                 }
             }
         }
 
-  stage("Sonarqube Analysis") {
-    steps {
-        withSonarQubeEnv('SonarQube-Server') {
-            sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectKey=Petclinic \
-                -Dsonar.projectName=Petclinic \
-                -Dsonar.projectVersion=1.0 \
-                -Dsonar.sources=src/ \
-                -Dsonar.java.binaries=. \
-                -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml '''
+        stage('Sonarqube Analysis') {
+            steps {
+                withSonarQubeEnv('SonarQube-Server') {
+                    sh '''
+                        $SCANNER_HOME/bin/sonar-scanner \
+                        -Dsonar.projectKey=Petclinic \
+                        -Dsonar.projectName=Petclinic \
+                        -Dsonar.projectVersion=${PROJECT_VERSION} \
+                        -Dsonar.sources=src/ \
+                        -Dsonar.java.binaries=target/classes \
+                        -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+                    '''
+                }
+            }
         }
-    }
-}
 
-
-     stage('mvn build') {
+        stage('mvn build') {
             steps {
                 sh 'mvn clean install'
             }
         }
-  
+
         stage("Build and Push Docker Image") {
             steps {
                 script {
@@ -80,7 +83,6 @@
                 }
             }
         }
- 
         
         stage('Checkout Helm Repo') {
             steps {
@@ -109,32 +111,31 @@
             }
         }
 
-      stage('Commit and Push Changes to Helm Repository') {
-    steps {
-        dir('helm_chart_petclinic') {
-            script {
-                sh 'git config --global user.email "sanae.abahcine@esi.ac.ma"'
-                sh 'git config --global user.name "sanaabahcine"'
-                
-                // Vérifier s'il y a des modifications dans le répertoire de travail
-                def gitStatus = sh(script: 'git status --porcelain', returnStatus: true)
-                
-                if (gitStatus != 0) {
-                    // S'il y a des modifications, ajouter, valider et pousser les modifications
-                    sh 'git add ./petclinic/values.yaml'
-                    sh 'git commit -m "Update image tag in values.yaml"'
-                    sh 'git pull origin main --rebase'
-                    sh 'git push origin main'
-                } else {
-                    echo 'Aucune modification à valider et à pousser.'
+        stage('Commit and Push Changes to Helm Repository') {
+            steps {
+                dir('helm_chart_petclinic') {
+                    script {
+                        sh 'git config --global user.email "sanae.abahcine@esi.ac.ma"'
+                        sh 'git config --global user.name "sanaabahcine"'
+                        
+                        // Vérifier s'il y a des modifications dans le répertoire de travail
+                        def gitStatus = sh(script: 'git status --porcelain', returnStatus: true)
+                        
+                        if (gitStatus != 0) {
+                            // S'il y a des modifications, ajouter, valider et pousser les modifications
+                            sh 'git add ./petclinic/values.yaml'
+                            sh 'git commit -m "Update image tag in values.yaml"'
+                            sh 'git pull origin main --rebase'
+                            sh 'git push origin main'
+                        } else {
+                            echo 'Aucune modification à valider et à pousser.'
+                        }
+                    }
                 }
             }
         }
-    }
-}
 
-
-        stage('Deployement') {
+        stage('Deployment') {
             steps {
                 script {
                     sh "helm upgrade --install petclinic ./helm_chart_petclinic/petclinic --values ./helm_chart_petclinic/petclinic/values.yaml --kubeconfig=${KUBECONFIG}"
