@@ -40,11 +40,7 @@
             }
         }
         
-        stage('mvn build') {
-            steps {
-                sh 'mvn clean install'
-            }
-        }
+        
      stage('Unit Tests') {
             steps {
                 sh 'mvn clean test jacoco:report'
@@ -67,6 +63,11 @@
                         -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
                         -Dsonar.java.checkstyle.reportPaths=target/checkstyle-result.xml'''
                 }
+            }
+        }
+     stage('mvn build') {
+            steps {
+                sh 'mvn clean install'
             }
         }
   
