@@ -41,17 +41,12 @@
         }
         
         
-     stage('Unit Tests') {
+     stage('mvn test') {
             steps {
                 sh 'mvn clean test jacoco:report'
             }
-            post {
-                always {
-                    junit 'target/surefire-reports/*.xml'
-                }
-            }
         }
-   stage("Sonarqube Analysis") {
+        stage("Sonarqube Analysis") {
             steps {
                 withSonarQubeEnv('SonarQube-Server') {
                     sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectKey=Petclinic \
