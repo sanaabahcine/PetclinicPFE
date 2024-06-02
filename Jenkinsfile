@@ -19,7 +19,7 @@ pipeline {
             }
         }
         
-        stage('Checkout Main Repo') {
+        stage('Checkout From Git') {
             steps {
                 git branch: 'main', url: 'https://github.com/sanaabahcine/PetclinicPFE.git'
             }
